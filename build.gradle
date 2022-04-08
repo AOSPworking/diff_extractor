@@ -1,0 +1,39 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    // https://mvnrepository.com/artifact/com.github.gumtreediff/core
+    implementation 'com.github.gumtreediff:core:3.0.0'
+    // https://mvnrepository.com/artifact/com.github.gumtreediff/client
+    implementation group: 'com.github.gumtreediff', name: 'client', version: '3.0.0'
+    // https://mvnrepository.com/artifact/com.github.gumtreediff/gen.javaparser
+    implementation group: 'com.github.gumtreediff', name: 'gen.javaparser', version: '3.0.0'
+
+    // for jdt
+    compile group: 'org.eclipse.jdt', name: 'org.eclipse.jdt.core', version: '3.12.3'
+    compile group: 'org.eclipse.jdt', name: 'org.eclipse.jdt.annotation', version: '2.0.0'
+    compile group: 'org.eclipse.jdt.core.compiler', name: 'ecj', version: '4.4.2'
+    compile group: 'org.apache.commons', name: 'commons-io', version: '1.3.2'
+
+    // for jgit
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r"
+    compile "org.slf4j:slf4j-simple:1.7.30"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
