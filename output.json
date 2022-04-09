@@ -3,21 +3,18 @@
     "commit-id-1": [
       {
         "name": "file-name-1",
-        "type": "ADD",
         "methods": [
           "class.method-1", "class.method-2"
         ]
       },
       {
         "name": "file-name-2",
-        "type": "UPDATE",
         "methods": [
           "class.method-3", "class.method-4", "class.method-5"
         ]
       },
       {
         "name": "file-name-3",
-        "type": "DELETE",
         "methods": [
           "class.method-6"
         ]
@@ -27,14 +24,12 @@
     "commit-id-2": [
       {
         "name": "file-name-2",
-        "type": "UPDATE",
         "methods": [
           "class.method-3", "class.method-4", "class.method-5"
         ]
       },
       {
         "name": "file-name-3",
-        "type": "DELETE",
         "methods": [
           "class.method-6"
         ]
