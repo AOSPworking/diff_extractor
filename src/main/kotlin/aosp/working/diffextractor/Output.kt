@@ -7,7 +7,6 @@ data class TopJson(
 )
 
 data class FileProperty(
-    @Json(name = "name") val name: String,
-    @Json(name = "type") val type: String,
-    @Json(name = "methods") val methods: List<String>
+    @Json(name = "name", index = 0) val name: String,
+    @Json(name = "methods", index = 1) val methods: List<String>
 )
