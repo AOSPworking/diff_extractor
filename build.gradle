@@ -29,6 +29,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile "org.eclipse.jgit:org.eclipse.jgit:6.1.0.202203080745-r"
     compile "org.slf4j:slf4j-simple:1.7.30"
+
+    // for json
+    implementation 'com.beust:klaxon:5.5'
 }
 
 compileKotlin {
