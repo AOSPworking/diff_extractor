@@ -1,20 +1,17 @@
 package aosp.working.diffextractor
 
+import com.github.gumtreediff.tree.Tree
+import org.eclipse.jdt.core.dom.CompilationUnit
 import org.eclipse.jgit.diff.DiffEntry
 import org.eclipse.jgit.diff.DiffFormatter
 import org.eclipse.jgit.lib.*
 import org.eclipse.jgit.revwalk.RevCommit
-import org.eclipse.jgit.revwalk.RevTree
-import org.eclipse.jgit.revwalk.RevWalk
 import org.eclipse.jgit.treewalk.CanonicalTreeParser
 import org.eclipse.jgit.treewalk.TreeWalk
 import org.eclipse.jgit.util.io.DisabledOutputStream
 import java.io.ByteArrayOutputStream
 
 import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
-import java.nio.file.Files
 
 class JGitUtil(val repository: Repository) {
 
@@ -106,7 +103,6 @@ class JGitUtil(val repository: Repository) {
             val os = ByteArrayOutputStream()
             objectLoader.copyTo(os)
             os.toByteArray() }
-
 
     companion object {
         /**

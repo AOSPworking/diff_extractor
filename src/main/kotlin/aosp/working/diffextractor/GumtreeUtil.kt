@@ -44,20 +44,10 @@ class GumtreeUtil(repoPath: String) {
     fun getTreeComparerByDiffEntry(entry: DiffEntry, curr: RevCommit, prev: RevCommit)
         = when (entry.changeType) {
             DiffEntry.ChangeType.MODIFY -> ModifyEntryTreeComparer(
-                this.getTreeByByteArray(jGitUtil.extract(JGitUtil.getNeedPathFromDiffEntry(entry), prev)),
-                this.getTreeByByteArray(jGitUtil.extract(JGitUtil.getNeedPathFromDiffEntry(entry), curr))
+                getTreeByByteArray(jGitUtil.extract(JGitUtil.getNeedPathFromDiffEntry(entry), prev)),
+                getTreeByByteArray(jGitUtil.extract(JGitUtil.getNeedPathFromDiffEntry(entry), curr))
             )
             else -> null
-        }
-
-    /**
-     * 根据文件的 ByteArray 获得对应的 GumTree。
-     * @param bytes 文件读取后的 byte[]，
-     * @return 自顶向下的 GumTree，从根节点开始。
-     */
-    fun getTreeByByteArray(bytes: ByteArray): Tree =
-        InputStreamReader(ByteArrayInputStream(bytes)).use {
-            JavaParserGenerator().generateFrom().reader(it).root
         }
 
     /**
@@ -102,9 +92,33 @@ class GumtreeUtil(repoPath: String) {
     }
 
     companion object {
+        fun getAllMethodUnderRoot(root: Tree): List<Tree> =
+            root.descendants.filter { it.type.name == "MethodDeclaration" }
+
+        fun getAllClassOrInterface(root: Tree): List<Tree> =
+            root.descendants.filter { it.type.name == "ClassOrInterfaceDeclaration" }
+
         fun getEmptyTree(): Tree =
             InputStreamReader(ByteArrayInputStream(byteArrayOf())).use {
                 JavaParserGenerator().generateFrom().reader(it).root
             }
+
+        /**
+         * 根据文件的 ByteArray 获得对应的 GumTree。
+         * @param bytes 文件读取后的 byte[]，
+         * @return 自顶向下的 GumTree，从根节点开始。
+         */
+        fun getTreeByByteArray(bytes: ByteArray): Tree =
+            InputStreamReader(ByteArrayInputStream(bytes)).use {
+                JavaParserGenerator().generateFrom().reader(it).root
+            }
+
+        /**
+         * 获得某 commit 下的某个名为 fileName 的文件对应的 Tree
+         * @param fileName 文件名
+         * @param commit
+         */
+        fun make(fileName: String, commit: RevCommit): Tree
+                = getTreeByByteArray(Global.jGitUtil.extract(fileName, commit))
     }
 }

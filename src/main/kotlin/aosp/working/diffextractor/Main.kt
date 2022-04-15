@@ -14,14 +14,6 @@ import kotlin.collections.HashMap
 
 object Main {
     @JvmStatic
-    fun test() {
-        val file = File("output.json")
-        val str = file.readText()
-        val json = Klaxon().parse<TopJson>(str)
-        println(json)
-    }
-
-    @JvmStatic
     fun main(args: Array<String>) {
         //test()
         assert(args.size > 3) {
@@ -29,10 +21,6 @@ object Main {
                     "The 2nd Argument is one commit id\n" +
                     "The 3rd Argument is another commit id\n"
         }
-
-        val configFile = File("config.properties")
-        val props = Properties()
-        FileInputStream(configFile).use { props.load(it) }
 
         val repoPath: String = args[0]
         val util = JGitUtil(repoPath)
@@ -57,7 +45,7 @@ object Main {
             )
         }
 
-        val topJson = TopJson(secondCommitId, fileProperties)
+        val topJson = TopJson(firstCommitId, secondCommitId, fileProperties)
         val result = Klaxon().toJsonString(topJson)
         println(result)
     }
