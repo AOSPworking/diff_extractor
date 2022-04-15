@@ -1,9 +1,10 @@
-package aosp.working.diffextractor
+package aosp.working.diffextractor.dto
 
 import com.beust.klaxon.Json
 
 data class TopJson(
-    @Json(name = "commits") val commitChangeFiles: Map<String, List<FileProperty>>
+    @Json(name = "id", index = 0) val commitHashId: String,
+    @Json(name = "changeFiles", index = 1) val commitChangeFiles: List<FileProperty>
 )
 
 data class FileProperty(

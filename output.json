@@ -1,39 +1,23 @@
 {
-  "commits": {
-    "commit-id-1": [
-      {
-        "name": "file-name-1",
-        "methods": [
-          "class.method-1", "class.method-2"
-        ]
-      },
-      {
-        "name": "file-name-2",
-        "methods": [
-          "class.method-3", "class.method-4", "class.method-5"
-        ]
-      },
-      {
-        "name": "file-name-3",
-        "methods": [
-          "class.method-6"
-        ]
-      }
-    ],
-
-    "commit-id-2": [
-      {
-        "name": "file-name-2",
-        "methods": [
-          "class.method-3", "class.method-4", "class.method-5"
-        ]
-      },
-      {
-        "name": "file-name-3",
-        "methods": [
-          "class.method-6"
-        ]
-      }
-    ]
-  },
+  "id": "12312312312312b",
+  "changeFiles": [
+    {
+      "name": "file-name-1",
+      "methods": [
+        "class.method-1", "class.method-2"
+      ]
+    },
+    {
+      "name": "file-name-2",
+      "methods": [
+        "class.method-3", "class.method-4", "class.method-5"
+      ]
+    },
+    {
+      "name": "file-name-3",
+      "methods": [
+        "class.method-6"
+      ]
+    }
+  ]
 }

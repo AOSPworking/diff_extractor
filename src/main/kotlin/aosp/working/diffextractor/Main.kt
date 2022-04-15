@@ -1,16 +1,15 @@
 package aosp.working.diffextractor
 
+import aosp.working.diffextractor.dto.FileProperty
+import aosp.working.diffextractor.dto.TopJson
 import com.beust.klaxon.Klaxon
 import com.github.gumtreediff.actions.EditScript
-import com.github.gumtreediff.actions.EditScriptGenerator
-import com.github.gumtreediff.actions.SimplifiedChawatheScriptGenerator
-import com.github.gumtreediff.matchers.Matchers
 import org.eclipse.jgit.diff.DiffEntry
 import org.eclipse.jgit.revwalk.RevCommit
 import java.io.File
 import java.io.FileInputStream
-import java.nio.file.Files
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 object Main {
@@ -52,13 +51,13 @@ object Main {
                 .filter { gumtreeUtil.isTreeAccessDownToUp(it.node, "MethodDeclaration") }
                 .map { gumtreeUtil.findMethodNameOfDiffEntry(it.node)!! }
                 .distinct()
-            FileProperty(JGitUtil.getNeedPathFromDiffEntry(diffEntry), methods)
+            FileProperty(
+                JGitUtil.getNeedPathFromDiffEntry(diffEntry),
+                methods
+            )
         }
 
-        val commitChangeFiles: HashMap<String, List<FileProperty>> = hashMapOf()
-        commitChangeFiles[secondCommitId] = fileProperties
-
-        val topJson = TopJson(commitChangeFiles)
+        val topJson = TopJson(secondCommitId, fileProperties)
         val result = Klaxon().toJsonString(topJson)
         println(result)
     }
