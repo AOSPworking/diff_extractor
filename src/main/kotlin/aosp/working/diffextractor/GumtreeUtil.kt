@@ -7,7 +7,6 @@ import com.github.gumtreediff.actions.SimplifiedChawatheScriptGenerator
 import com.github.gumtreediff.client.Run
 import com.github.gumtreediff.gen.javaparser.JavaParserGenerator
 import com.github.gumtreediff.tree.Tree
-import org.eclipse.jdt.core.dom.MethodDeclaration
 import org.eclipse.jgit.diff.DiffEntry
 import org.eclipse.jgit.revwalk.RevCommit
 import java.io.ByteArrayInputStream
@@ -64,26 +63,74 @@ class GumtreeUtil(repoPath: String) {
         return false
     }
 
-    /**
-     * 根据当前的 Tree 节点，从下往上找到它 MethodDeclaration 的远亲节点。
-     * 并且获得 MethodDeclaration 下的 SimpleName (方法名)。
-     * @param tree 传入的 Tree 节点，注意这不是树，而是树上的一个节点。
-     * @return 找不到就返回 null
-     */
-    fun findMethodNameOfDiffEntry(tree: Tree): String? {
-        val methods = getAllMethodUnderRoot(getRoot(tree))
-            .filter { it.descendants.contains(tree) }
-        return if (methods.size == 1) getMethodName(methods[0]) else null
-    }
-
     companion object {
+        fun getFullyQualifiedMethodName(tree: Tree): String? {
+            val methodNode: Tree = findMethodOfDiffEntry(tree) ?: return null
+            val classNode: Tree = getParentClass(methodNode) ?: return null
+            val simpleName: String = getMethodName(methodNode) ?: return null
+            return "${getFullyQualifiedClassName(classNode)}.$simpleName"
+        }
+
+        fun getFullyQualifiedClassName(tree: Tree): String? {
+            var classNode: Tree =
+                if (tree.type.name == "ClassOrInterfaceDeclaration") tree
+                else getParentClass(tree) ?: return null
+            var className: String = getClassName(classNode) ?: return null
+            while (true) {
+                classNode = getParentClass(classNode) ?: break
+                className = "${getClassName(classNode)}\$$className"
+            }
+            return className
+        }
+
+        /**
+         * 根据当前的 Tree 节点，从下往上找到它 MethodDeclaration 的远亲节点。
+         * 并且获得 MethodDeclaration 下的 SimpleName (方法名)。
+         * @param tree 传入的 Tree 节点，注意这不是树，而是树上的一个节点。
+         * @return 找不到就返回 null
+         */
+        fun findMethodOfDiffEntry(tree: Tree): Tree? {
+            val methods = getAllMethodUnderRoot(getRoot(tree))
+                .filter { it.descendants.contains(tree) }
+            return if (methods.size == 1) methods[0] else null
+        }
+
+        /**
+         * 获得一个 tree 的 root 节点
+         */
         fun getRoot(tree: Tree): Tree {
             var iterTree = tree
             while (iterTree.parent != null) iterTree = iterTree.parent
             return iterTree
         }
 
+        /**
+         * 获得一个节点的 parent class 节点。
+         * 因为有可能是最外层 class 同级或之上的，所以返回值可能是 null。
+         * 因为传入的 tree 可能就是 class，所以如果是的话会先调到它的 parent
+         */
+        fun getParentClass(tree: Tree): Tree? {
+            var iterTree: Tree? = if (tree.type.name == "ClassOrInterfaceDeclaration") tree.parent else tree
+            while (iterTree != null && iterTree.type.name != "ClassOrInterfaceDeclaration") {
+                iterTree = iterTree.parent
+            }
+            return iterTree
+        }
+
+        /**
+         * 获得一个 method 的名字
+         */
         fun getMethodName(tree: Tree): String? {
+            if (tree.type.name != "MethodDeclaration") return null
+            val names = tree.children.filter { it.type.name == "SimpleName" }
+            return if (names.size == 1) names[0].label else null
+        }
+
+        /**
+         * 获得一个 class 的名字
+         */
+        fun getClassName(tree: Tree): String? {
+            if (tree.type.name != "ClassOrInterfaceDeclaration") return null
             val names = tree.children.filter { it.type.name == "SimpleName" }
             return if (names.size == 1) names[0].label else null
         }
@@ -93,11 +140,6 @@ class GumtreeUtil(repoPath: String) {
 
         fun getAllClassOrInterface(root: Tree): List<Tree> =
             root.descendants.filter { it.type.name == "ClassOrInterfaceDeclaration" }
-
-        fun getEmptyTree(): Tree =
-            InputStreamReader(ByteArrayInputStream(byteArrayOf())).use {
-                JavaParserGenerator().generateFrom().reader(it).root
-            }
 
         /**
          * 根据文件的 ByteArray 获得对应的 GumTree。
@@ -115,6 +157,6 @@ class GumtreeUtil(repoPath: String) {
          * @param commit
          */
         fun make(fileName: String, commit: RevCommit): Tree
-                = getTreeByByteArray(Global.jGitUtil.extract(fileName, commit))
+            = getTreeByByteArray(Global.jGitUtil.extract(fileName, commit))
     }
 }

@@ -37,7 +37,7 @@ object Main {
         val fileProperties: List<FileProperty> = editScripts.map { (diffEntry, editScript) ->
             val methods: List<String> = editScript
                 .filter { gumtreeUtil.isTreeAccessDownToUp(it.node, "MethodDeclaration") }
-                .map { gumtreeUtil.findMethodNameOfDiffEntry(it.node)!! }
+                .map { GumtreeUtil.getFullyQualifiedMethodName(it.node)!! }
                 .distinct()
             FileProperty(
                 JGitUtil.getNeedPathFromDiffEntry(diffEntry),

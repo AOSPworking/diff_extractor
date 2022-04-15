@@ -49,9 +49,4 @@ object JDTUtil {
      */
     fun make(fileName: String, commit: RevCommit): CompilationUnit
             = make(Global.jGitUtil.extract(fileName, commit))
-
-    fun getFullyQualifiedNameBySimpleName(cu: CompilationUnit, simpleName: String): String {
-        val pkgFullyQualifiedName = cu.`package`.name.fullyQualifiedName
-        return "asd"
-    }
 }
