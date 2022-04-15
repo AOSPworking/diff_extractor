@@ -6,6 +6,7 @@ import com.github.gumtreediff.actions.EditScriptGenerator
 import com.github.gumtreediff.actions.SimplifiedChawatheScriptGenerator
 import com.github.gumtreediff.client.Run
 import com.github.gumtreediff.gen.javaparser.JavaParserGenerator
+import com.github.gumtreediff.tree.FakeTree
 import com.github.gumtreediff.tree.Tree
 import org.eclipse.jgit.diff.DiffEntry
 import org.eclipse.jgit.revwalk.RevCommit
@@ -81,6 +82,10 @@ class GumtreeUtil(repoPath: String) {
                 className = "${getClassName(classNode)}\$$className"
             }
             return className
+        }
+
+        fun getPackageName(tree: Tree): String? {
+            return null
         }
 
         /**

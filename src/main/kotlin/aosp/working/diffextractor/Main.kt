@@ -2,15 +2,16 @@ package aosp.working.diffextractor
 
 import aosp.working.diffextractor.dto.FileProperty
 import aosp.working.diffextractor.dto.TopJson
+import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
 import com.github.gumtreediff.actions.EditScript
 import org.eclipse.jgit.diff.DiffEntry
 import org.eclipse.jgit.revwalk.RevCommit
 import java.io.File
-import java.io.FileInputStream
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import kotlin.reflect.KProperty
 
 object Main {
     @JvmStatic
@@ -35,18 +36,16 @@ object Main {
             gumtreeUtil.getDiffEntryToEditScriptMapByTwoCommit(firstCommit, secondCommit)
 
         val fileProperties: List<FileProperty> = editScripts.map { (diffEntry, editScript) ->
+            val fileName: String = JGitUtil.getNeedPathFromDiffEntry(diffEntry)
             val methods: List<String> = editScript
                 .filter { gumtreeUtil.isTreeAccessDownToUp(it.node, "MethodDeclaration") }
                 .map { GumtreeUtil.getFullyQualifiedMethodName(it.node)!! }
                 .distinct()
-            FileProperty(
-                JGitUtil.getNeedPathFromDiffEntry(diffEntry),
-                methods
-            )
+            FileProperty(fileName, methods)
         }
 
         val topJson = TopJson(firstCommitId, secondCommitId, fileProperties)
         val result = Klaxon().toJsonString(topJson)
-        println(result)
+        Files.writeString(Path.of(Global.props["extract.output.path"] as String), result)
     }
 }

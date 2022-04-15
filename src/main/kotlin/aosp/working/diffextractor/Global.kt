@@ -7,7 +7,7 @@ import java.io.InputStream
 import java.util.*
 
 object Global {
-    private val props: Properties = Properties()
+    val props: Properties = Properties()
     private val repository: Repository
     val jGitUtil: JGitUtil
 
