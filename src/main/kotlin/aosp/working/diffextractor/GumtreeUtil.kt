@@ -71,27 +71,23 @@ class GumtreeUtil(repoPath: String) {
      * @return 找不到就返回 null
      */
     fun findMethodNameOfDiffEntry(tree: Tree): String? {
-        var iterTree = tree
-        var className: String? = null; var methodName: String? = null
-        while (iterTree.parent != null && iterTree.type?.name != "MethodDeclaration") {
-            iterTree = iterTree.parent
-        }
-        for (child in iterTree.children) {
-            if (child.type.name == "SimpleName") methodName = child.label
-        }
-        if (methodName == null) return null
-
-        while (iterTree.parent != null && iterTree.type?.name != "ClassOrInterfaceDeclaration") {
-            iterTree = iterTree.parent
-        }
-        for (child in iterTree.children) {
-            if (child.type.name == "SimpleName") className = child.label
-        }
-        if (className == null) return null
-        return "$className.$methodName"
+        val methods = getAllMethodUnderRoot(getRoot(tree))
+            .filter { it.descendants.contains(tree) }
+        return if (methods.size == 1) getMethodName(methods[0]) else null
     }
 
     companion object {
+        fun getRoot(tree: Tree): Tree {
+            var iterTree = tree
+            while (iterTree.parent != null) iterTree = iterTree.parent
+            return iterTree
+        }
+
+        fun getMethodName(tree: Tree): String? {
+            val names = tree.children.filter { it.type.name == "SimpleName" }
+            return if (names.size == 1) names[0].label else null
+        }
+
         fun getAllMethodUnderRoot(root: Tree): List<Tree> =
             root.descendants.filter { it.type.name == "MethodDeclaration" }
 
